@@ -9,6 +9,10 @@ WORKDIR /home/Github/markets-monitor
 COPY requirements.txt /tmp/
 RUN pip install --requirement /tmp/requirements.txt
 
-EXPOSE 8888
+# Jupyter Lab Port
+EXPOSE 8888 
+
+# Dash(board) Port
+EXPOSE 8050 
 
 ENTRYPOINT ["jupyter", "lab","--ip=0.0.0.0","--allow-root"]

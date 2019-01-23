@@ -2,27 +2,28 @@
 
 A financial and economic markets monitor
 
-## Roadmap 
+## Roadmap  
 
-### Stock Market Data Feed 
+### Phase 1
 
-#### Phase 1:
+#### Stock Market Data Feed
 
 - Objectives:
     1. View daily historical data
     2. View intraday data in the last month
 
-### U.S. Economic Data Feed
+#### Index Data Feed
 
-#### Phase 1:
+- Objectives:
+    1. View daily historical data
+
+#### U.S. Economic Data Feed
 
 - Objectives:
     1. Browse major U.S. Economic indicators
     2. Browse news update from the FRED
 
-### World Economic Data Feed
-
-#### Phase 1:
+#### World Economic Data Feed
 
 - Objectives:
     1. Browse major world economic indicators
