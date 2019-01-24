@@ -4,8 +4,6 @@ WORKDIR /jup
 
 RUN pip install jupyter -U && pip install jupyterlab
 
-WORKDIR /home/Github/markets-monitor
-
 COPY requirements.txt /tmp/
 RUN pip install --requirement /tmp/requirements.txt
 
