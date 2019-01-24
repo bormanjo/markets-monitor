@@ -15,4 +15,4 @@ EXPOSE 8888
 # Dash(board) Port
 EXPOSE 8050 
 
-ENTRYPOINT ["jupyter", "lab","--ip=0.0.0.0","--allow-root"]
+CMD ["/bin/bash"]
