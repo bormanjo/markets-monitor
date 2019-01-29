@@ -6,11 +6,21 @@ A financial and economic markets monitor
 
 ### Phase 1
 
+#### Design
+
+- Objectives:
+    1. Formulate dashboard layout
+    2. Apply a colorized theme: Blue, Gray, Black?
+
 #### Stock Market Data Feed
 
 - Objectives:
     1. View daily historical data
-    2. View intraday data in the last month
+    2. ~~View intraday data in the last 3 months~~
+
+- To Do
+  - Denote the data source:
+    - Only IEX at the moment
 
 #### Index Data Feed
 
