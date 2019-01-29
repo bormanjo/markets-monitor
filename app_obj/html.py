@@ -32,3 +32,22 @@ def get_graph(id, figure):
     )
 
     return graph
+
+def get_symbol_selector(id, df):
+    """
+    Returns an HTML widger for selecting a ticker
+    """
+
+    data = df[["name", "symbol"]]
+
+    data["name"] = data["symbol"].map(str) + " - " + data["name"]
+
+    data = data.rename(columns={"name":"label", "symbol":"value"}).to_dict("records")
+
+    dropdown = dcc.Dropdown(
+        id=id,
+        options=data, 
+        multi=False
+    )
+
+    return dropdown

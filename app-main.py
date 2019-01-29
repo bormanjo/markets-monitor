@@ -12,6 +12,7 @@ app = dash.Dash(__name__)
 
 crypto_names = dl.markets.crypto.get_symbols()
 aapl_intraday = dl.markets.stocks.get_intraday(ticker="AAPL", start=datetime.datetime(2019, 1, 28))
+symbols = dl.markets.reference.get_symbols()
 
 params = {
     "filtering": True,
@@ -31,7 +32,9 @@ def serve_layout():
         ),
 
         # Body
-        app_obj.html.get_DataTable("datatable-crypto", crypto_names, params),
+        app_obj.html.get_DataTable("datatable-interative", crypto_names, params),
+
+        app_obj.html.get_symbol_selector("dropdown-intraday", df=symbols),
 
         app_obj.html.get_graph("graph-intraday", figure=intraday_fig)
         
