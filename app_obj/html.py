@@ -1,6 +1,7 @@
 import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
+from datetime import datetime
 
 
 def get_DataTable(id, df, params):
@@ -20,16 +21,18 @@ def get_DataTable(id, df, params):
 
     return dt
 
-
-def get_graph(id, figure):
+def get_graph(id, figure=None):
     """
     Returns a plotly line graph as an HTML object
     """
 
-    graph = dcc.Graph(
-        id=id,
-        figure=figure
-    )
+    if figure is None:
+        graph = dcc.Graph(id=id)
+    else:
+        graph = dcc.Graph(
+            id=id,
+            figure=figure
+        )
 
     return graph
 
@@ -40,7 +43,7 @@ def get_symbol_selector(id, df):
 
     data = df[["name", "symbol"]]
 
-    data["name"] = data["symbol"].map(str) + " - " + data["name"]
+    data.loc[:, "name"] = data["symbol"].map(str) + " - " + data["name"]
 
     data = data.rename(columns={"name":"label", "symbol":"value"}).to_dict("records")
 
@@ -51,3 +54,17 @@ def get_symbol_selector(id, df):
     )
 
     return dropdown
+
+def get_date_selector(id, min_date=None, max_date=None):
+    """
+    Returns an HTML date selector widget
+    """
+
+    selector = dcc.DatePickerSingle(
+        id=id,
+        date=datetime.today(),
+        max_date_allowed=max_date,
+        min_date_allowed=min_date
+    )
+
+    return selector

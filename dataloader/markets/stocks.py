@@ -1,7 +1,7 @@
 import iexfinance as iex
 import pandas as pd
 from datetime import datetime, date
-
+from dataloader.markets.reference import today, three_months_ago, five_years_ago
 
 def get_realtime_quote(tickers):
     """
@@ -76,14 +76,23 @@ def get_intraday(ticker, start=date.today()):
        
     # Check dates
     if not (isinstance(start, datetime) or isinstance(start, date)):
-        raise ValueError("Argument passed to 'start' parameter: '{}' is invalid.".format(start))
+        raise ValueError("Argument passed to 'start': '{}' is invalid.".format(start))
+
+    if start > today or start <= three_months_ago:
+        raise ValueError("Argument passed to 'start': '{}' is outside the last 90 days".format(start))
 
     # Retrieve data
     df = iex.stocks.get_historical_intraday(ticker, start, output_format="pandas")
 
     # Return OHLCV
     cols = ["open", "high", "low", "close", "volume"]
-    return df[cols]
+
+    try:
+        df = df[cols]
+    except KeyError as e:
+        df = pd.DataFrame(columns=cols)
+
+    return df
         
 def get_realtime_book(tickers):
     """

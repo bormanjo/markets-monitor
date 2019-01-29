@@ -1,6 +1,6 @@
 import iexfinance as iex
 import pandas as pd
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 
 _symbol_type_mapping = {"ad": "ADR",
@@ -9,8 +9,13 @@ _symbol_type_mapping = {"ad": "ADR",
                         "si": "Secondary Issue",
                         "lp": "Limited Partnership",
                         "cs": "Common Stock",
-                        "et": "ETF"}
+                        "et": "ETF"
+}
 
+today = datetime.today()
+three_months_ago = today - timedelta(days = 30 * 3)
+five_years_ago = today - timedelta(days = 360 * 5)
+                        
 def get_symbols():
     """
     Retreives a table of valid symbols for which data may be retrieved.
