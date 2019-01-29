@@ -31,7 +31,7 @@ def serve_layout():
         ),
 
         # Body
-        app_obj.html.get_DataTable("datatable-interative", df, params),
+        app_obj.html.get_DataTable("datatable-crypto", crypto_names, params),
 
         app_obj.html.get_graph("graph-intraday", figure=intraday_fig)
         

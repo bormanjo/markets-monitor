@@ -1,4 +1,4 @@
-from ..reference import reference, stocks
+from . import reference, stocks
 
 
 def get_symbols():

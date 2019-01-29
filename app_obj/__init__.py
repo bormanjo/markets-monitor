@@ -1,0 +1,1 @@
+from app_obj import figures, html

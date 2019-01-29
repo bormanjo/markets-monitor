@@ -55,10 +55,10 @@ def get_historical(tickers, start=date.today(), end=date.today(), period="daily"
         raise ValueError("Argument passed to 'period' parameter: '{}' is invalid.".format(period))
         
     # Check dates
-    if not (isinstance(start, datetime) or isinstance(start, pd.date)):
+    if not (isinstance(start, datetime) or isinstance(start, date)):
         raise ValueError("Argument passed to 'start' parameter: '{}' is invalid.".format(start))
         
-    if not (isinstance(end, datetime) or isinstance(end, pd.date)):
+    if not (isinstance(end, datetime) or isinstance(end, date)):
         raise ValueError("Argument passed to 'end' parameter: '{}' is invalid.".format(end))
     
     # Retrieve data in pandas format
@@ -70,19 +70,17 @@ def get_intraday(ticker, start=date.today()):
     """
     Retrieves historical intraday (minutely) OHLCV pricing data for a ticker. IEX limits historical intraday data to 3 months.
     May only retrieve one day at a time.
+    :param start: Datetime or Date object, defaults to today.
     Returns a DataFrame.
     """
        
     # Check dates
-    if not (isinstance(start, datetime) or isinstance(start, pd.date)):
+    if not (isinstance(start, datetime) or isinstance(start, date)):
         raise ValueError("Argument passed to 'start' parameter: '{}' is invalid.".format(start))
-        
-    if not (isinstance(end, datetime) or isinstance(end, pd.date)):
-        raise ValueError("Argument passed to 'end' parameter: '{}' is invalid.".format(end))
-        
+
     # Retrieve data
     df = iex.stocks.get_historical_intraday(ticker, start, output_format="pandas")
-    
+
     # Return OHLCV
     cols = ["open", "high", "low", "close", "volume"]
     return df[cols]
