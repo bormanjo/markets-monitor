@@ -44,9 +44,7 @@ def build_ohlcv(df, title='Intraday OHLCV Plot'):
             title='Volume',
             side="right",     
             overlaying="y"  # Volume plot overlays the candlestick
-        ),
-        paper_bgcolor='rgb(197, 217, 247, 0)',
-        plot_bgcolor='rgb(197, 217, 247, 0)'
+        )
     )
 
     # Aggregate the traces and build the figure

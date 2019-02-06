@@ -15,8 +15,27 @@ app = dash.Dash(__name__)
 empty_ohlcv = pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
 
 colors = {
-    'background': 'rgb(67, 112, 178)',
-    'text': 'rgb(237, 241, 247)'
+    'background': 'rgb(255, 255, 255)',
+    'tile-background': 'rgb(214, 214, 214, 0.5)',
+    'text': 'rgb(5, 42, 188)',
+    'sub-text': 'rgb(0, 0, 0)',
+    'plot-background': 'rgb(185, 204, 232, 0.6)'
+}
+
+tile_style = {
+    'backgroundColor': colors['tile-background'],
+    'border': '2px solid black',
+    'borderRadius': '5px'
+}
+
+input_container_style = {
+    'textAlign': 'center'
+}
+
+input_style = {
+    'display': 'inline-block',
+    'width': '50%',
+    'margin': 'auto'
 }
 
 today = datetime.today()
@@ -34,7 +53,7 @@ params = {
 }
 
 def serve_layout():
-    layout = html.Div(style={'backgroundColor': colors['background']}, children=[
+    layout = html.Div(style=tile_style, children=[
         # Header
         html.H1(
             "Financial Markets Monitor",
@@ -42,27 +61,39 @@ def serve_layout():
         ),
 
         # Body
-        app_obj.html.get_DataTable("datatable-interative", crypto_names, params),
+        html.Div(style=tile_style, children=[
+            html.H2(
+                "Active Cryptocurrencies",
+                style={'textAlign': 'center', 'color': colors['sub-text']}
+            ),
+            app_obj.html.get_DataTable("datatable-interative", crypto_names, params),
+        ], className="five columns"),
+                
+        
 
         # Intraday Panel
-        html.Div([
+        html.Div(style=tile_style, children=[
+            html.H2(
+                "Intraday OHLCVs",
+                style={'textAlign': 'center', 'color': colors['sub-text']}
+            ),
             # Inputs
             html.Div([
                 html.Div([
                     app_obj.html.get_symbol_selector("dropdown-intraday-symbol", df=symbols)
-                ], className="six columns"),
+                ], className="six columns", style=input_style), 
                 
                 html.Div([
                     app_obj.html.get_date_selector("dateselector-intraday", min_date=three_months_ago)
-                ], className="six columns")
+                ], className="six columns", style=input_style)
 
-            ], className="row"),
+            ], className="row", style=input_container_style),
             
             # Output
             html.Div([
                 app_obj.html.get_graph("graph-intraday")
             ])
-        ])
+        ], className="six columns",)
 
         
     ])
@@ -90,7 +121,7 @@ def update_intraday_graph(dropdown_intraday_symbol, dateselector_intraday):
 
     df = dl.markets.stocks.get_intraday(ticker=ticker, start=start)
 
-    return app_obj.figures.build_ohlcv(df, title='{} - Intraday OHLCV ()'.format(ticker))
+    return app_obj.figures.build_ohlcv(df, title='{} - Intraday OHLCV ({})'.format(ticker, start.date()))
 
 
 app.css.append_css({

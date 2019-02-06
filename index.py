@@ -15,9 +15,9 @@ app = dash.Dash(__name__)
 empty_ohlcv = pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
 
 colors = {
-    'background': 'rgb(67, 112, 178)',
+    'background': 'rgb(67, 112, 178, 0.4)',
     'text': 'rgb(237, 241, 247)',
-    'plot-background': 'rgb(197, 217, 247, 0.75)'
+    'plot-background': 'rgb(227, 235, 247, 0.80)'
 }
 
 today = datetime.today()

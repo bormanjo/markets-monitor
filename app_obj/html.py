@@ -36,7 +36,7 @@ def get_graph(id, figure=None):
 
     return graph
 
-def get_symbol_selector(id, df):
+def get_symbol_selector(id, df, default_value='AAPL'):
     """
     Returns an HTML widger for selecting a ticker
     """
@@ -50,7 +50,8 @@ def get_symbol_selector(id, df):
     dropdown = dcc.Dropdown(
         id=id,
         options=data, 
-        multi=False
+        multi=False,
+        value=default_value
     )
 
     return dropdown
@@ -62,7 +63,7 @@ def get_date_selector(id, min_date=None, max_date=None):
 
     selector = dcc.DatePickerSingle(
         id=id,
-        date=datetime.today(),
+        date=datetime.today().date(),
         max_date_allowed=max_date,
         min_date_allowed=min_date
     )
