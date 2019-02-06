@@ -14,6 +14,11 @@ app = dash.Dash(__name__)
 
 empty_ohlcv = pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
 
+colors = {
+    'background': 'rgb(67, 112, 178)',
+    'text': 'rgb(237, 241, 247)'
+}
+
 today = datetime.today()
 three_months_ago = today - timedelta(days = 30 * 3)
 five_years_ago = today - timedelta(days = 360 * 5)
@@ -29,10 +34,11 @@ params = {
 }
 
 def serve_layout():
-    layout = html.Div([
+    layout = html.Div(style={'backgroundColor': colors['background']}, children=[
         # Header
         html.H1(
-            'The time is: ' + str(datetime.now())
+            "Financial Markets Monitor",
+            style={'textAlign': 'center', 'color': colors['text']}
         ),
 
         # Body
