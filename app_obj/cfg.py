@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta
 
 today = datetime.today()
-three_months_ago = today - timedelta(days = 30 * 3)
-five_years_ago = today - timedelta(days = 360 * 5)
+three_months_ago = today - timedelta(days=30 * 3)
+five_years_ago = today - timedelta(days=252 * 5)
+
+
+user_tickers = []
 
 
 colors = {

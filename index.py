@@ -43,7 +43,7 @@ def serve_layout():
         ),
 
         # Body
-        app_obj.html.get_DataTable("datatable-interative", crypto_names, params),
+        app_obj.html.get_datatable("datatable-interative", crypto_names, params),
 
         # Intraday Panel
         html.Div([

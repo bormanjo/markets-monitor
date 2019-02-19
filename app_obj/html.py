@@ -1,10 +1,10 @@
 import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
-from datetime import datetime
+from datetime import datetime, date
 
 
-def get_DataTable(id, df, params):
+def get_datatable(id, df, params):
     """
     Returns an HTML DataTable container for a Dash app
     """
@@ -21,6 +21,7 @@ def get_DataTable(id, df, params):
 
     return dt
 
+
 def get_graph(id, figure=None):
     """
     Returns a plotly line graph as an HTML object
@@ -35,6 +36,7 @@ def get_graph(id, figure=None):
         )
 
     return graph
+
 
 def get_symbol_selector(id, df, default_value='AAPL'):
     """
@@ -56,14 +58,21 @@ def get_symbol_selector(id, df, default_value='AAPL'):
 
     return dropdown
 
-def get_date_selector(id, min_date=None, max_date=None):
+
+def get_date_selector(id, min_date=None, max_date=None, value=None):
     """
     Returns an HTML date selector widget
     """
 
+    if value is None:
+        value = datetime.today().date()
+    else:
+        if not isinstance(value, date):
+            raise ValueError("Argument passed to 'value' is of type '{}', not 'date'".format(type(value)))
+
     selector = dcc.DatePickerSingle(
         id=id,
-        date=datetime.today().date(),
+        date=value,
         max_date_allowed=max_date,
         min_date_allowed=min_date
     )

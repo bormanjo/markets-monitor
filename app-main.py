@@ -7,6 +7,7 @@ import dash_html_components as html
 import dataloader as dl
 import pandas as pd
 import app_obj
+from iexfinance.utils.exceptions import IEXSymbolError
 
 app = dash.Dash(__name__)
 
@@ -57,7 +58,9 @@ def serve_layout():
         # Body
         app_obj.panel.crypto_table(),
 
-        app_obj.panel.intraday_plot()
+        app_obj.panel.intraday_plot(),
+
+        app_obj.panel.historical_plot()
     ])
 
     return layout
@@ -79,13 +82,42 @@ def update_intraday_graph(dropdown_intraday_symbol, dateselector_intraday):
     """
 
     ticker = dropdown_intraday_symbol
-    start = datetime.strptime(dateselector_intraday, '%Y-%m-%d')
-
-    print(start)
+    start = datetime.strptime(dateselector_intraday.split(" ")[0], '%Y-%m-%d')
 
     df = dl.markets.stocks.get_intraday(ticker=ticker, start=start)
 
     return app_obj.figures.build_ohlcv(df, title='{} - Intraday OHLCV ({})'.format(ticker, start.date()))
+
+
+@app.callback(
+    Output('graph-historical', 'figure'),
+    [
+        Input('dropdown-historical-symbol', 'value'),
+        Input('dateselector-historical-start', 'date'),
+        Input('dateselector-historical-end', 'date')
+    ]
+)
+def update_historical_graph(dropdown_historical_symbol, dateselector_start, dateselector_end):
+    """
+    Updates the historical plot
+    """
+
+    ticker = dropdown_historical_symbol
+    start = datetime.strptime(dateselector_start.split(" ")[0], '%Y-%m-%d')
+    end = datetime.strptime(dateselector_end.split(" ")[0], '%Y-%m-%d')
+
+    try:
+        df = dl.markets.stocks.get_historical(tickers=ticker, start=start, end=end)
+    except IEXSymbolError as err:
+        # TODO - Display error stating no data available
+        print("No data available for '{}'".format(ticker))
+        return "No Data"
+
+    return app_obj.figures.build_ohlcv(df, title='{} - Historical OHLCV ({start} to {end})'.format(
+        ticker,
+        start=start.date(),
+        end=end.date()
+    ))
 
 
 app.css.append_css({

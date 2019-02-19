@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, date
 from dataloader.markets.reference import today, three_months_ago, five_years_ago
 
+
 def get_realtime_quote(tickers):
     """
     Retrieves realtime prices for a ticker or list of tickers.
@@ -32,6 +33,7 @@ def get_realtime_quote(tickers):
     # Return entries
     return pd.DataFrame({"Symbols": symbols, "Price": prices})
 
+
 def get_last_trade(tickers):
     """
     Retrieves the last trade executed (price and size) for the given ticker(s).
@@ -46,6 +48,9 @@ def get_last_trade(tickers):
 def get_historical(tickers, start=date.today(), end=date.today(), period="daily"):
     """
     Retrieves historical OHLCV pricing data for a ticker or list of tickers. IEX limits historical data to 5 Years.
+    :param tickers: A ticker or list of tickers to retrieve data for
+    :param start: Datetime or Date object, defaults to 5 years ago.
+    :param end: Datetime or Date object, defaults to today.
     :param period: Defaults to 'daily'. Also accepts 'weekly', 'monthly', 'yearly'.
     Returns a DataFrame.
     """
@@ -66,10 +71,12 @@ def get_historical(tickers, start=date.today(), end=date.today(), period="daily"
     
     return df
 
+
 def get_intraday(ticker, start=date.today()):
     """
     Retrieves historical intraday (minutely) OHLCV pricing data for a ticker. IEX limits historical intraday data to 3 months.
     May only retrieve one day at a time.
+    :param ticker: Stock ticker to retrieve data for
     :param start: Datetime or Date object, defaults to today.
     Returns a DataFrame.
     """
@@ -85,10 +92,15 @@ def get_intraday(ticker, start=date.today()):
     df = iex.stocks.get_historical_intraday(ticker, start, output_format="pandas")
 
     # Return OHLCV
+    market_cols = ["marketOpen", "marketHigh", "marketLow", "marketClose", "marketVolume"]
     cols = ["open", "high", "low", "close", "volume"]
 
     try:
+        # Utilize Market Data, not IEX data
+        df = df[market_cols]
+        df.rename(columns=dict(zip(market_cols, cols)), inplace=True)
         df = df[cols]
+
     except KeyError as e:
         df = pd.DataFrame(columns=cols)
 
@@ -118,7 +130,7 @@ def get_realtime_book(tickers):
         asks["type"] = "ask"
         
         # Append together
-        book_df = bids.append(ask)
+        book_df = bids.append(asks)
         
         # Denote the corresponding symbol
         book_df["ticker"] = sym
