@@ -35,6 +35,7 @@ def build_ohlcv(df, title='Intraday OHLCV Plot'):
 
     # Define the layout
     layout = go.Layout(
+        showlegend=False,
         title=title,
         yaxis=dict(
             title='OHLC',

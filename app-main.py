@@ -38,10 +38,6 @@ input_style = {
     'margin': 'auto'
 }
 
-today = datetime.today()
-three_months_ago = today - timedelta(days = 30 * 3)
-five_years_ago = today - timedelta(days = 360 * 5)
-
 crypto_names = dl.markets.crypto.get_symbols()
 aapl_intraday = dl.markets.stocks.get_intraday(ticker="AAPL", start=datetime(2019, 1, 28))
 symbols = dl.markets.reference.get_symbols()
@@ -52,55 +48,23 @@ params = {
     "sorting_type" : "multi"
 }
 
+
 def serve_layout():
     layout = html.Div(style=tile_style, children=[
         # Header
-        html.H1(
-            "Financial Markets Monitor",
-            style={'textAlign': 'center', 'color': colors['text']}
-        ),
+        app_obj.panel.header(),
 
         # Body
-        html.Div(style=tile_style, children=[
-            html.H2(
-                "Active Cryptocurrencies",
-                style={'textAlign': 'center', 'color': colors['sub-text']}
-            ),
-            app_obj.html.get_DataTable("datatable-interative", crypto_names, params),
-        ], className="five columns"),
-                
-        
+        app_obj.panel.crypto_table(),
 
-        # Intraday Panel
-        html.Div(style=tile_style, children=[
-            html.H2(
-                "Intraday OHLCVs",
-                style={'textAlign': 'center', 'color': colors['sub-text']}
-            ),
-            # Inputs
-            html.Div([
-                html.Div([
-                    app_obj.html.get_symbol_selector("dropdown-intraday-symbol", df=symbols)
-                ], className="six columns", style=input_style), 
-                
-                html.Div([
-                    app_obj.html.get_date_selector("dateselector-intraday", min_date=three_months_ago)
-                ], className="six columns", style=input_style)
-
-            ], className="row", style=input_container_style),
-            
-            # Output
-            html.Div([
-                app_obj.html.get_graph("graph-intraday")
-            ])
-        ], className="six columns",)
-
-        
+        app_obj.panel.intraday_plot()
     ])
 
     return layout
 
+
 app.layout = serve_layout
+
 
 @app.callback(
     Output('graph-intraday', 'figure'),

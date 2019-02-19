@@ -1,1 +1,1 @@
-from app_obj import figures, html
+from app_obj import figures, html, panel, cfg
