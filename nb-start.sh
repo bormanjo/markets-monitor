@@ -1,2 +1,2 @@
 #! /bin/bash
-jupyter lab --ip='0.0.0.0' --allow-root
+jupyter lab --port=8889 --ip='0.0.0.0' --allow-root

@@ -38,7 +38,7 @@ RUN pip install --requirement /tmp/requirements.txt
 WORKDIR /home
 
 # Jupyter Lab Port
-EXPOSE 8888 
+EXPOSE 8889
 
 # Dash(board) Port
 EXPOSE 8050 
