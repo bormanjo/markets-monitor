@@ -120,3 +120,4 @@ dmypy.json
 .idea/
 *.pyc
 *.ipynb
+.DS_Store
