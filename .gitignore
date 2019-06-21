@@ -118,3 +118,5 @@ dmypy.json
 ## Custom Ignores
 .vscode/
 .idea/
+*.pyc
+*.ipynb
