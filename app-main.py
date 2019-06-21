@@ -6,8 +6,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dataloader as dl
 import pandas as pd
+from pandas.tseries.offsets import BDay
 import app_obj
-from iexfinance.utils.exceptions import IEXSymbolError
+
 
 app = dash.Dash(__name__)
 
@@ -39,14 +40,14 @@ input_style = {
     'margin': 'auto'
 }
 
-crypto_names = dl.markets.crypto.get_symbols()
-aapl_intraday = dl.markets.stocks.get_intraday(ticker="AAPL", start=datetime(2019, 1, 28))
-symbols = dl.markets.reference.get_symbols()
+aapl_intraday = dl.equities.get_historical(tickers="AAPL", period="1wk", interval="1h")
+aapl_eod = dl.equities.get_historical(tickers="AAPL", period="ytd", interval="1h")
+symbols = dl.reference.get_symbols()
 
 params = {
     "filtering": True,
     "sorting": True,
-    "sorting_type" : "multi"
+    "sorting_type": "multi"
 }
 
 
@@ -56,8 +57,6 @@ def serve_layout():
         app_obj.panel.header(),
 
         # Body
-        app_obj.panel.crypto_table(),
-
         app_obj.panel.intraday_plot(),
 
         app_obj.panel.historical_plot()
@@ -73,20 +72,25 @@ app.layout = serve_layout
     Output('graph-intraday', 'figure'),
     [
         Input('dropdown-intraday-symbol', 'value'),
-        Input('dateselector-intraday', 'date')
+        Input('dateselector-intraday', 'date'),
+        Input('dropdown-intraday-interval', 'value')
     ]
 )
-def update_intraday_graph(dropdown_intraday_symbol, dateselector_intraday):
+def update_intraday_graph(dropdown_intraday_symbol, dateselector_intraday, dropdown_intraday_interval):
     """
     Updates the intraday plot
     """
 
+    # Variables to update
     ticker = dropdown_intraday_symbol
-    start = datetime.strptime(dateselector_intraday.split(" ")[0], '%Y-%m-%d')
+    interval = dropdown_intraday_interval
+    end = app_obj.utils.parse_date(dateselector_intraday)
 
-    df = dl.markets.stocks.get_intraday(ticker=ticker, start=start)
+    start = end - BDay(1)
 
-    return app_obj.figures.build_ohlcv(df, title='{} - Intraday OHLCV ({})'.format(ticker, start.date()))
+    df = dl.equities.get_historical(tickers=ticker, start_date=start, end_date=end, interval=interval)
+
+    return app_obj.figures.build_ohlcv(df, title=f'{ticker} - Intraday OHLCV ({end.date()})')
 
 
 @app.callback(
@@ -94,30 +98,25 @@ def update_intraday_graph(dropdown_intraday_symbol, dateselector_intraday):
     [
         Input('dropdown-historical-symbol', 'value'),
         Input('dateselector-historical-start', 'date'),
-        Input('dateselector-historical-end', 'date')
+        Input('dateselector-historical-end', 'date'),
+        Input('dropdown-historical-interval', 'value')
     ]
 )
-def update_historical_graph(dropdown_historical_symbol, dateselector_start, dateselector_end):
+def update_historical_graph(dropdown_historical_symbol, dateselector_historical_start, dateselector_historical_end,
+                            dropdown_historical_interval):
     """
     Updates the historical plot
     """
 
+    # Variables to update
     ticker = dropdown_historical_symbol
-    start = datetime.strptime(dateselector_start.split(" ")[0], '%Y-%m-%d')
-    end = datetime.strptime(dateselector_end.split(" ")[0], '%Y-%m-%d')
+    start = app_obj.utils.parse_date(dateselector_historical_start).date()
+    end = app_obj.utils.parse_date(dateselector_historical_end).date()
+    interval = dropdown_historical_interval
 
-    try:
-        df = dl.markets.stocks.get_historical(tickers=ticker, start=start, end=end)
-    except IEXSymbolError as err:
-        # TODO - Display error stating no data available
-        print("No data available for '{}'".format(ticker))
-        return "No Data"
+    df = dl.equities.get_historical(tickers=ticker, start_date=start, end_date=end, interval=interval)
 
-    return app_obj.figures.build_ohlcv(df, title='{} - Historical OHLCV ({start} to {end})'.format(
-        ticker,
-        start=start.date(),
-        end=end.date()
-    ))
+    return app_obj.figures.build_ohlcv(df, title=f'{ticker} - Historical OHLCV ({start} to {end})')
 
 
 app.css.append_css({

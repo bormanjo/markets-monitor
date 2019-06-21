@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
 today = datetime.today()
-three_months_ago = today - timedelta(days=30 * 3)
-five_years_ago = today - timedelta(days=252 * 5)
+min_intraday_date = today - timedelta(days=730)
+one_year_ago = today - timedelta(days=252 * 1)
 
 
 user_tickers = []

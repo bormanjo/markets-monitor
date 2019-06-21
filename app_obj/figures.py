@@ -6,7 +6,7 @@ def build_ohlcv(df, title='Intraday OHLCV Plot'):
     Builds an OHLCV candlestick plot and returns a Plotly figure
     """
 
-    cols = ["open", "high", "low", "close", "volume"]
+    cols = ["Open", "High", "Low", "Close", "Volume"]
 
     if not [col in df.columns for col in cols]:
         raise ValueError("'df' does not contain all required OHLCV columns: {}".format(cols))
@@ -14,17 +14,17 @@ def build_ohlcv(df, title='Intraday OHLCV Plot'):
     # Build the OHLC candlestick trace
     trace1 = go.Ohlc(
         x=df.index,
-        open=df["open"],
-        high=df["high"],
-        low=df["low"],
-        close=df["close"],
+        open=df["Open"],
+        high=df["High"],
+        low=df["Low"],
+        close=df["Close"],
         name="OHLC"
     )
 
     # Build the Volume barchart
     trace2 = go.Bar(
         x=df.index,
-        y=df["volume"],
+        y=df["Volume"],
         yaxis='y2',         # Plot on a separate axis
         name="Volume",
         opacity=0.6,        # Slightly opaque

@@ -31,29 +31,6 @@ def live_tickers():
     """
 
 
-def crypto_table():
-    """
-    An HMTL Div containing an interactive DataTable of active Cryptos
-    :return: html Div object
-    """
-
-    params = {
-        "filtering": True,
-        "sorting": True,
-        "sorting_type" : "multi"
-    }
-
-    obj = html.Div(style=cfg.tile_style, children=[
-        html.H2(
-            "Active Cryptocurrencies",
-            style={'textAlign': 'center', 'color': cfg.colors['sub-text']}
-        ),
-        app_obj.html.get_datatable("datatable-interative", dl.markets.crypto.get_symbols(), params),
-    ], className="five columns")
-
-    return obj
-
-
 def intraday_plot():
     """
     An HTML Div containing an interactive plot of intraday OHLCV data
@@ -69,18 +46,21 @@ def intraday_plot():
         # Inputs
         html.Div([
             html.Div([
+                app_obj.html.get_interval_selector("dropdown-intraday-interval", default_value="5m")
+            ], className="three columns", style=cfg.input_style),
+
+            html.Div([
                 app_obj.html.get_symbol_selector("dropdown-intraday-symbol",
-                                                 df=dl.markets.reference.get_symbols()
+                                                 df=dl.reference.get_symbols()
                                                  )
-            ], className="six columns", style=cfg.input_style),
+            ], className="three columns", style=cfg.input_style),
 
             html.Div([
                 app_obj.html.get_date_selector("dateselector-intraday",
-                                               min_date=cfg.three_months_ago,
+                                               min_date=cfg.min_intraday_date,
                                                max_date=cfg.today
                                                )
-            ], className="six columns", style=cfg.input_style)
-
+            ], className="three columns", style=cfg.input_style)
         ], className="row", style=cfg.input_container_style),
 
         # Output
@@ -108,22 +88,26 @@ def historical_plot():
         # Inputs
         html.Div([
             html.Div([
+                app_obj.html.get_interval_selector("dropdown-historical-interval", default_value="1d")
+            ], className="three columns", style=cfg.input_style),
+
+            html.Div([
                 app_obj.html.get_symbol_selector("dropdown-historical-symbol",
-                                                 df=dl.markets.reference.get_symbols()
+                                                 df=dl.reference.get_symbols()
                                                  )
             ], className="twelve columns", style=cfg.input_style),
 
             html.Div([
                 app_obj.html.get_date_selector("dateselector-historical-start",
-                                               min_date=cfg.five_years_ago,
+                                               # min_date=cfg.five_years_ago,
                                                max_date=cfg.today,
-                                               value=cfg.five_years_ago
+                                               value=cfg.one_year_ago
                                                )
             ], className="six columns", style=cfg.input_style),
 
             html.Div([
                 app_obj.html.get_date_selector("dateselector-historical-end",
-                                               min_date=cfg.five_years_ago,
+                                               # min_date=cfg.five_years_ago,
                                                max_date=cfg.today,
                                                value=cfg.today
                                                )

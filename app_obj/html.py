@@ -2,6 +2,9 @@ import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 from datetime import datetime, date
+from . import utils
+import dataloader as dl
+import pandas as pd
 
 
 def get_datatable(id, df, params):
@@ -43,11 +46,11 @@ def get_symbol_selector(id, df, default_value='AAPL'):
     Returns an HTML widger for selecting a ticker
     """
 
-    data = df[["name", "symbol"]]
+    data = df[["Symbol", "Security Name"]]
 
-    data.loc[:, "name"] = data["symbol"].map(str) + " - " + data["name"]
+    # data.loc[:, "name"] = data["symbol"].map(str) + " - " + data["name"]
 
-    data = data.rename(columns={"name":"label", "symbol":"value"}).to_dict("records")
+    data = data.rename(columns={"Security Name": "label", "Symbol": "value"}).to_dict("records")
 
     dropdown = dcc.Dropdown(
         id=id,
@@ -75,6 +78,46 @@ def get_date_selector(id, min_date=None, max_date=None, value=None):
         date=value,
         max_date_allowed=max_date,
         min_date_allowed=min_date
+    )
+
+    return selector
+
+
+def get_interval_selector(id, default_value='5m'):
+    """
+    Returns an HTML interval selector
+    :param id: HTML Object ID
+    :param default_value: Initial Value
+    :return: HTML Selector Widget
+    """
+
+    data = utils.dict_to_selector_data(dl.equities.interval_mapping)
+
+    selector = dcc.Dropdown(
+        id=id,
+        options=data,
+        multi=False,
+        value=default_value
+    )
+
+    return selector
+
+
+def get_period_selector(id, default_value='ytd'):
+    """
+    Returns an HTML period selector
+    :param id: HTML Object ID
+    :param default_value: Initial Value
+    :return: HTML Selector Widget
+    """
+
+    data = utils.dict_to_selector_data(dl.equities.period_mapping)
+
+    selector = dcc.Dropdown(
+        id=id,
+        options=data,
+        multi=False,
+        value=default_value
     )
 
     return selector

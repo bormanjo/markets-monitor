@@ -2,13 +2,13 @@ pandas
 numpy
 scipy
 iexfinance
+yfinance
 matplotlib
 mysql-connector-python
-dash==0.35.1
-dash-html-components==0.13.4
-dash-core-components==0.42.1
-dash-table==3.1.11
-dash-table==3.1.11
+dash
+dash-html-components
+dash-core-components
+dash-table
 plotly
 cufflinks
 
