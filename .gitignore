@@ -121,3 +121,4 @@ dmypy.json
 *.pyc
 *.ipynb
 .DS_Store
+config.ini
