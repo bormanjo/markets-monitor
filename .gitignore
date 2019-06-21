@@ -122,3 +122,5 @@ dmypy.json
 *.ipynb
 .DS_Store
 config.ini
+nasdaqlisted.txt
+*-checkpoint*

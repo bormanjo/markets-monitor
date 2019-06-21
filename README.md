@@ -15,12 +15,14 @@ A financial and economic markets monitor
 #### Stock Market Data Feed
 
 - Objectives:
-    1. View daily historical data
+    1. ~~View daily historical data~~
     2. ~~View intraday data in the last 3 months~~
 
 - To Do
   - Denote the data source:
-    - Only IEX at the moment
+    - Yahoo Finance for Equity Data
+    - NASDAQ for Symbol Reference
+    - Quandl for (everything else?)
 
 #### Index Data Feed
 
