@@ -82,9 +82,9 @@ def update_intraday_graph(dropdown_intraday_symbol, dateselector_intraday, dropd
     # Variables to update
     ticker = dropdown_intraday_symbol
     interval = dropdown_intraday_interval
-    end = app_obj.utils.parse_date(dateselector_intraday)
+    start = app_obj.utils.parse_date(dateselector_intraday)
 
-    start = end - BDay(1)
+    end = start + BDay(1)
 
     df = dl.equities.get_historical(tickers=ticker, start_date=start, end_date=end, interval=interval)
 

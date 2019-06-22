@@ -2,6 +2,7 @@ import feedparser
 import datetime
 import pathlib
 import json
+import os
 
 rss_feeds = {
     "WSJ Markets": {
@@ -19,6 +20,9 @@ rss_feeds = {
 }
 
 CACHE_DIR = pathlib.Path("./dataloader/cache")
+
+if not CACHE_DIR.exists():
+    os.mkdir(CACHE_DIR)
 
 
 def update_cache(feed_key):
