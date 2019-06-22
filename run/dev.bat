@@ -1,5 +1,3 @@
-cd ..
-
 docker build -t py-markets-monitor .
 
 start chrome --new-window "http://localhost:8889"

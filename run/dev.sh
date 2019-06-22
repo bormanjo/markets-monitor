@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-cd ..
-
 docker build -t py-markets-monitor .
 
 open http://localhost:8889
