@@ -1,3 +1,7 @@
+"""
+Defines app configuration and styling
+"""
+
 from datetime import datetime, timedelta
 
 today = datetime.today()

@@ -1,3 +1,7 @@
+"""
+Defines miscellaneous helper functions
+"""
+
 import datetime
 import pandas as pd
 

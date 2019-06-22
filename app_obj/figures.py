@@ -1,3 +1,7 @@
+"""
+Defines common Plotly figures used throughout the app
+"""
+
 import plotly.graph_objs as go
 
 

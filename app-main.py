@@ -1,3 +1,7 @@
+"""
+Defines the high level app outline, structure and callback interaction
+"""
+
 import dash
 from dash.dependencies import Input, Output
 import dash_table
@@ -10,37 +14,10 @@ import pandas as pd
 from pandas.tseries.offsets import BDay
 import app_obj
 
-
+# Define the app object
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Defaults/Parameters
-
-empty_ohlcv = pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
-
-colors = {
-    'background': 'rgb(255, 255, 255)',
-    'tile-background': 'rgb(214, 214, 214, 0.5)',
-    'text': 'rgb(5, 42, 188)',
-    'sub-text': 'rgb(0, 0, 0)',
-    'plot-background': 'rgb(185, 204, 232, 0.6)'
-}
-
-tile_style = {
-    'backgroundColor': colors['tile-background'],
-    'border': '2px solid black',
-    'borderRadius': '5px'
-}
-
-input_container_style = {
-    'textAlign': 'center'
-}
-
-input_style = {
-    'display': 'inline-block',
-    'width': '50%',
-    'margin': 'auto'
-}
-
+# Testing data
 aapl_intraday = dl.equities.get_historical(tickers="AAPL", period="1wk", interval="1h")
 aapl_eod = dl.equities.get_historical(tickers="AAPL", period="ytd", interval="1h")
 symbols = dl.reference.get_symbols()
@@ -77,7 +54,11 @@ def serve_layout():
     return layout
 
 
+# Pass layout to app object for display
 app.layout = serve_layout
+
+
+# Callbacks ------------------------------------------------------------------------------------------------------------
 
 
 @app.callback(
@@ -138,6 +119,9 @@ def update_news_feed_content(news_feed_tab_selector):
     markdown_str = dl.news.get_rss_feed(news_feed_tab_selector, top_n=5)
 
     return dcc.Markdown(markdown_str)
+
+
+# Main -----------------------------------------------------------------------------------------------------------------
 
 
 if __name__ == "__main__":

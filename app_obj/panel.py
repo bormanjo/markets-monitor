@@ -1,3 +1,7 @@
+"""
+
+"""
+
 import dash
 from dash.dependencies import Input, Output
 import dash_table
@@ -11,7 +15,7 @@ import app_obj
 import app_obj.cfg as cfg
 
 
-def panel_template(title, input_row, output_row):
+def panel_template(title="Template Panel", input_row=dbc.Row(), output_row=dbc.Row()):
     """
     A template for designing panels
     :param title: String. Title of the panel
@@ -142,17 +146,13 @@ def news_feed():
     :return: html Div object
     """
 
-    obj = dbc.Col([
-        # Title
-        dbc.Row(html.H2("News Feed")),
-
-        # Output
-        dbc.Row([
+    output_row = dbc.Row([
             dcc.Tabs(id="news-feed-tab-selector", value=list(dl.news.rss_feeds.keys())[0],
                      children=[dcc.Tab(label=source_key, value=source_key) for source_key in dl.news.rss_feeds.keys()]
                      ),
             html.Div(id='news-feed-tab')
-        ], className="row")
-    ])
+        ])
+
+    obj = panel_template("News Feed", output_row=output_row)
 
     return obj
