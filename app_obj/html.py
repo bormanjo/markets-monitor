@@ -5,10 +5,12 @@ defines high level html objects used throughout the app
 import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from datetime import datetime, date
 from . import utils
 import dataloader as dl
 import pandas as pd
+
 
 def get_datatable(id, df, params):
     """
@@ -124,3 +126,17 @@ def get_period_selector(id, default_value='ytd'):
     )
 
     return selector
+
+
+def get_news_card(entry, **kwargs):
+    return dbc.Card(
+        dbc.CardBody(
+            [
+                html.H5(entry["title"], className="card-title"),
+                html.P(entry["summary"]),
+                dbc.CardLink("External link", href=entry["link"]),
+            ]
+        ),
+        **kwargs
+    )
+

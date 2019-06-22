@@ -1,5 +1,5 @@
 """
-
+Defines the main component panels of the app
 """
 
 import dash
@@ -147,11 +147,27 @@ def news_feed():
     """
 
     output_row = dbc.Row([
-            dcc.Tabs(id="news-feed-tab-selector", value=list(dl.news.rss_feeds.keys())[0],
-                     children=[dcc.Tab(label=source_key, value=source_key) for source_key in dl.news.rss_feeds.keys()]
-                     ),
-            html.Div(id='news-feed-tab')
+        dcc.Tabs(id="news-feed-tab-selector", value=list(dl.news.rss_feeds.keys())[0],
+                 children=[dcc.Tab(label=source_key, value=source_key) for source_key in dl.news.rss_feeds.keys()]
+                 ),
+        html.Div(id='news-feed-tab', children=[
+            dbc.Row(children=[
+                html.Div(id='news-feed-content')
+            ]),
+            dbc.Row(children=[
+                dbc.Col(
+                    dbc.Button("< Previous", id="news-button-back", outline=True, color="primary",
+                               className="mr-1", block=True, n_clicks_timestamp=0),
+                    width=6
+                ),
+                dbc.Col(
+                    dbc.Button("Next >", id="news-button-next", outline=True, color="primary",
+                               className="mr-1", block=True, n_clicks_timestamp=0),
+                    width=6
+                )
+            ])
         ])
+    ])
 
     obj = panel_template("News Feed", output_row=output_row)
 

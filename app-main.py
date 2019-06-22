@@ -22,6 +22,11 @@ aapl_intraday = dl.equities.get_historical(tickers="AAPL", period="1wk", interva
 aapl_eod = dl.equities.get_historical(tickers="AAPL", period="ytd", interval="1h")
 symbols = dl.reference.get_symbols()
 
+# GLOBALS
+active_rss_tab = ""
+active_rss_page = 0
+
+
 params = {
     "filtering": True,
     "sorting": True,
@@ -112,13 +117,50 @@ def update_historical_graph(dropdown_historical_symbol, dateselector_historical_
     return app_obj.figures.build_ohlcv(df, title=f'{ticker} - Historical OHLCV ({start} to {end})')
 
 
-@app.callback(Output('news-feed-tab', 'children'),
-              [Input('news-feed-tab-selector', 'value')])
-def update_news_feed_content(news_feed_tab_selector):
+@app.callback(
+    Output('news-feed-content', 'children'),
+    [
+        Input('news-feed-tab-selector', 'value'),
+        Input('news-button-back', 'n_clicks_timestamp'),
+        Input('news-button-next', 'n_clicks_timestamp')
+    ]
+)
+def update_news_feed_content(news_feed_tab_selector, news_button_back, news_button_next):
     """Updates the news feed"""
-    markdown_str = dl.news.get_rss_feed(news_feed_tab_selector, top_n=5)
 
-    return dcc.Markdown(markdown_str)
+    global active_rss_tab       # Refers to the current RSS tab
+    global active_rss_page      # Refers to the current page w/in the tab
+
+    # When tabs change, change the active tab and reset page count
+    change_tab = active_rss_tab != news_feed_tab_selector
+
+    if change_tab:
+        active_rss_tab = news_feed_tab_selector
+        active_rss_page = 0
+
+    # Get the RSS feed from the data
+    feed_entries = dl.news.get_rss_feed(news_feed_tab_selector)
+    max_page = len(range(0, len(feed_entries), 5))
+
+    # If 'back' was pressed last and page is greater than 0 -> decrement page
+    if int(news_button_back) > int(news_button_next) and active_rss_page > 0 and not change_tab:
+        active_rss_page -= 1
+    # If 'next' was pressed and page is less than max -> increment page
+    elif int(news_button_next) > int(news_button_back) and active_rss_page < max_page and not change_tab:
+        active_rss_page += 1
+
+    # Map each entry in the feed into a news card
+    content = list(map(app_obj.html.get_news_card, feed_entries[active_rss_page:(active_rss_page+5)]))
+
+    # Add the row
+    content += [dbc.Row(children=[
+        dbc.Col(
+            html.Div(
+                html.H5(f"{active_rss_page + 1}/{max_page + 1}", style={"text-align": "center"})
+            ), width=12)
+    ])]
+
+    return html.Div(children=content)
 
 
 # Main -----------------------------------------------------------------------------------------------------------------
