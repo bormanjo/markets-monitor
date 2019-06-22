@@ -1,3 +1,5 @@
+![Dashboard](https://github.com/bormanjo/markets-monitor/blob/master/images/dashboard.png?raw=true)
+
 # markets-monitor
 
 A dashboard monitor for financial and economic markets data
