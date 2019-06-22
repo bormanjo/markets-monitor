@@ -4,13 +4,14 @@ import dash_table
 from datetime import datetime, timedelta
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import dataloader as dl
 import pandas as pd
 from pandas.tseries.offsets import BDay
 import app_obj
 
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # Defaults/Parameters
 
@@ -52,14 +53,25 @@ params = {
 
 
 def serve_layout():
-    layout = html.Div(style=tile_style, children=[
+    # noinspection PyPackageRequirements
+    layout = dbc.Container([
         # Header
         app_obj.panel.header(),
 
-        # Body
-        app_obj.panel.intraday_plot(),
 
-        app_obj.panel.historical_plot()
+        # Body
+        dbc.Row([
+            # Left Column
+            dbc.Col([
+                app_obj.panel.intraday_plot(),
+                app_obj.panel.historical_plot()
+            ], width=8),
+
+            # Right Column
+            dbc.Col([
+                app_obj.panel.news_feed()
+            ], width=4)
+        ])
     ])
 
     return layout
@@ -119,9 +131,14 @@ def update_historical_graph(dropdown_historical_symbol, dateselector_historical_
     return app_obj.figures.build_ohlcv(df, title=f'{ticker} - Historical OHLCV ({start} to {end})')
 
 
-app.css.append_css({
-    "external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"
-})
+@app.callback(Output('news-feed-tab', 'children'),
+              [Input('news-feed-tab-selector', 'value')])
+def update_news_feed_content(news_feed_tab_selector):
+    """Updates the news feed"""
+    markdown_str = dl.news.get_rss_feed(news_feed_tab_selector, top_n=5)
+
+    return dcc.Markdown(markdown_str)
+
 
 if __name__ == "__main__":
     app.run_server(debug=True, host='0.0.0.0', port=8050)

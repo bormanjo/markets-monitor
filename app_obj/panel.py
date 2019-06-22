@@ -4,22 +4,49 @@ import dash_table
 from datetime import datetime, timedelta
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import dataloader as dl
 import pandas as pd
 import app_obj
 import app_obj.cfg as cfg
 
 
+def panel_template(title, input_row, output_row):
+    """
+    A template for designing panels
+    :param title: String. Title of the panel
+    :param input_row: dbc.Row object
+    :param output_row: dbc.Row object
+    :return: dbc.Col object
+    """
+
+    obj = dbc.Col([
+        # Title
+        dbc.Row(html.H2(title)),
+
+        html.Hr(),
+
+        # Inputs
+        input_row,
+
+        # Output
+        output_row,
+
+        html.Hr(),
+    ])
+
+    return obj
+
+
 def header():
     """
     The app's HTML header
-    :return: html DiH! object
+    :return: html Div object
     """
 
-    obj = html.H1(
-        "Financial Markets Monitor",
-        style={'textAlign': 'center', 'color': cfg.colors['text']}
-    )
+    obj = dbc.Jumbotron([
+        html.H1("Financial Markets Monitor")
+    ])
 
     return obj
 
@@ -30,6 +57,8 @@ def live_tickers():
     :return:
     """
 
+    pass
+
 
 def intraday_plot():
     """
@@ -37,37 +66,31 @@ def intraday_plot():
     :return: html Div object
     """
 
-    obj = html.Div(style=cfg.tile_style, children=[
-        # Title
-        html.H2(
-            "Intraday OHLCVs",
-            style={'textAlign': 'center', 'color': app_obj.cfg.colors['sub-text']}
-        ),
-        # Inputs
-        html.Div([
-            html.Div([
-                app_obj.html.get_interval_selector("dropdown-intraday-interval", default_value="5m")
-            ], className="three columns", style=cfg.input_style),
+    title = "Intraday OHLCV"
 
-            html.Div([
-                app_obj.html.get_symbol_selector("dropdown-intraday-symbol",
-                                                 df=dl.reference.get_symbols()
-                                                 )
-            ], className="three columns", style=cfg.input_style),
+    input_row = dbc.Row([
+        dbc.Col([
+            app_obj.html.get_symbol_selector("dropdown-intraday-symbol", df=dl.reference.get_symbols())
+        ], width=8),
 
-            html.Div([
-                app_obj.html.get_date_selector("dateselector-intraday",
-                                               min_date=cfg.min_intraday_date,
-                                               max_date=cfg.today
-                                               )
-            ], className="three columns", style=cfg.input_style)
-        ], className="row", style=cfg.input_container_style),
+        dbc.Col([
+            app_obj.html.get_interval_selector("dropdown-intraday-interval", default_value="5m")
+        ], width=4),
 
-        # Output
-        html.Div([
-            app_obj.html.get_graph("graph-intraday")
-        ])
-    ], className="six columns")
+        dbc.Col([
+            app_obj.html.get_date_selector(
+                "dateselector-intraday",
+                min_date=cfg.min_intraday_date,
+                max_date=cfg.today
+            )
+        ], width=12)
+    ])
+
+    output_row = dbc.Row([
+        app_obj.html.get_graph("graph-intraday")
+    ])
+
+    obj = panel_template(title, input_row, output_row)
 
     return obj
 
@@ -78,47 +101,58 @@ def historical_plot():
     :return: html Div object
     """
 
-    obj = html.Div(style=cfg.tile_style, children=[
+    title = "Historical OHLCV"
+
+    input_row = dbc.Row([
+        dbc.Col([
+            app_obj.html.get_symbol_selector("dropdown-historical-symbol", df=dl.reference.get_symbols())
+        ], width=8),
+
+        dbc.Col([
+            app_obj.html.get_interval_selector("dropdown-historical-interval", default_value="1d")
+        ], width=4),
+
+        dbc.Col([
+            app_obj.html.get_date_selector("dateselector-historical-start",
+                                           max_date=cfg.today,
+                                           value=cfg.one_year_ago
+                                           )
+        ], width=6),
+
+        dbc.Col([
+            app_obj.html.get_date_selector("dateselector-historical-end",
+                                           max_date=cfg.today,
+                                           value=cfg.today
+                                           )
+        ], width=6)
+    ])
+
+    output_row = dbc.Row([
+        app_obj.html.get_graph("graph-historical")
+    ])
+
+    obj = panel_template(title, input_row, output_row)
+
+    return obj
+
+
+def news_feed():
+    """
+    An HTML Div containing a tabbed RSS feed indexed by source
+    :return: html Div object
+    """
+
+    obj = dbc.Col([
         # Title
-        html.H2(
-            "Historical OHLCV",
-            style={'textAlign': 'center', 'color': app_obj.cfg.colors['sub-text']}
-        ),
-
-        # Inputs
-        html.Div([
-            html.Div([
-                app_obj.html.get_interval_selector("dropdown-historical-interval", default_value="1d")
-            ], className="three columns", style=cfg.input_style),
-
-            html.Div([
-                app_obj.html.get_symbol_selector("dropdown-historical-symbol",
-                                                 df=dl.reference.get_symbols()
-                                                 )
-            ], className="twelve columns", style=cfg.input_style),
-
-            html.Div([
-                app_obj.html.get_date_selector("dateselector-historical-start",
-                                               # min_date=cfg.five_years_ago,
-                                               max_date=cfg.today,
-                                               value=cfg.one_year_ago
-                                               )
-            ], className="six columns", style=cfg.input_style),
-
-            html.Div([
-                app_obj.html.get_date_selector("dateselector-historical-end",
-                                               # min_date=cfg.five_years_ago,
-                                               max_date=cfg.today,
-                                               value=cfg.today
-                                               )
-            ], className="six columns", style=cfg.input_style)
-
-        ], className="row", style=cfg.input_container_style),
+        dbc.Row(html.H2("News Feed")),
 
         # Output
-        html.Div([
-            app_obj.html.get_graph("graph-historical")
-        ])
-    ], className="six columns")
+        dbc.Row([
+            dcc.Tabs(id="news-feed-tab-selector", value=list(dl.news.rss_feeds.keys())[0],
+                     children=[dcc.Tab(label=source_key, value=source_key) for source_key in dl.news.rss_feeds.keys()]
+                     ),
+            html.Div(id='news-feed-tab')
+        ], className="row")
+    ])
 
     return obj

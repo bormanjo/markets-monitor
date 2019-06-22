@@ -6,7 +6,6 @@ from . import utils
 import dataloader as dl
 import pandas as pd
 
-
 def get_datatable(id, df, params):
     """
     Returns an HTML DataTable container for a Dash app

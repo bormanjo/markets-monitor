@@ -8,7 +8,9 @@ mysql-connector-python
 dash
 dash-html-components
 dash-core-components
+dash-bootstrap-components
 dash-table
 plotly
 cufflinks
+feedparser
 
