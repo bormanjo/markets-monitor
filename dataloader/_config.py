@@ -9,16 +9,20 @@ FTP_ADDR = "ftp.nasdaqtrader.com"
 SYMBOL_DIR = "symboldirectory/"
 LISTED_FILE = "nasdaqlisted.txt"
 
+
 def _update_nyse_listed():
     """Gets the index of current listings on NASDAQ"""
     ftp = ftplib.FTP(FTP_ADDR)    
     ftp.login("Anonymous", "Guest")
     ftp.cwd(SYMBOL_DIR)
-    ftp.retrbinary("RETR " + LISTED_FILE, open(LISTED_FILE, 'wb').write)
+
+    # TODO - Assert that location of listed file is inside dataloader/
+    ftp.retrbinary("RETR " + LISTED_FILE, open("./dataloader/" + LISTED_FILE, 'wb').write)
     ftp.quit()
     
     return True
-    
+
+
 def _update(cfg):
     """Updates NYSE listings and last update date"""
     
@@ -33,6 +37,7 @@ def _update(cfg):
         cfg.write(cfg_file)
         
     return True
+
 
 _CFG_FILE = pathlib.Path("./dataloader/config.ini")
 

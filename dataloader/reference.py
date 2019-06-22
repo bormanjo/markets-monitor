@@ -8,7 +8,7 @@ from . import _config
 def get_listed():
     """Returns a DataFrame of all NASDAQ listings"""
     # Read the file containing listings
-    df = pd.read_csv(_config.LISTED_FILE, sep='|')
+    df = pd.read_csv("./dataloader/" + _config.LISTED_FILE, sep='|')
 
     # Drop the last row (contains extraneous data on file creation time)
     df.drop(df.tail(1).index, inplace=True)

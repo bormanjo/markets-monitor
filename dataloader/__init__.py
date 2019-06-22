@@ -1,1 +1,1 @@
-from . import _config, reference, equities
+from . import _config, reference, equities, news
