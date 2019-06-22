@@ -1,42 +1,53 @@
 # markets-monitor
 
-A financial and economic markets monitor
+A dashboard monitor for financial and economic markets data
 
-## Roadmap  
+## Overview
 
-### Phase 1
+This dashboard is meant to provide a **high level** synopsis of activity in domestic (U.S.) and foreign markets. It
+seeks to aggregate data across a variety of sources from stock prices to headline news into a single interactive 
+platform.
 
-#### Design
+Currently under development.
 
-- Objectives:
-    1. Formulate dashboard layout
-    2. Apply a colorized theme: Blue, Gray, Black?
+## Usage
 
-#### Stock Market Data Feed
+> **Note:** Running this dashboard locally requires docker.
 
-- Objectives:
-    1. ~~View daily historical data~~
-    2. ~~View intraday data in the last 3 months~~
+| Objective | Windows | UNIX |
+|:---:|:---:|:---:|
+| Development | `./run/dev.bat` | `./run/dev.sh` |
+| Deployment | `./run/run-app.bat` | `./run/run-app.sh` |
+ 
+ Execute the command above from the project's root directory in your terminal of choice.
 
-- To Do
-  - Denote the data source:
-    - Yahoo Finance for Equity Data
-    - NASDAQ for Symbol Reference
-    - Quandl for (everything else?)
+## Functionality
 
-#### Index Data Feed
-
-- Objectives:
-    1. View daily historical data
-
-#### U.S. Economic Data Feed
-
-- Objectives:
-    1. Browse major U.S. Economic indicators
-    2. Browse news update from the FRED
-
-#### World Economic Data Feed
-
-- Objectives:
-    1. Browse major world economic indicators
-    2. Brpwse news updates from the World Bank/OECD
+- Stock Market Data Feed
+    - Visualizations
+        - Intraday Plot [X]
+        - Historical Plot [X]
+    - Data
+        - Intraday data [X]
+        - Historical data [X]
+        - Quarterly reporting data
+- Market Headlines
+    - Visualizations
+        - Textual RSS Feed [X]
+        - Wordcloud or sentiment indicators?
+    - Data
+        - WSJ RSS Feeds [X]
+        - FRED RSS Feeds
+        - Others?
+- U.S. Economic Data
+    - Visualizations
+        - Time Series Plots
+        - YoY/QoQ Changes
+    - Data
+        - Quandl/FRED
+- Global Economic Data
+    - Visualizations
+        - Time Series Plots
+        - YoY/QoQ Changes
+    - Data
+        - ?
