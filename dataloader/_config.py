@@ -1,13 +1,14 @@
 import configparser
-import pathlib
 import ftplib
+import os
 from datetime import date
+from . import cfg
 
 # Constants
 
-FTP_ADDR = "ftp.nasdaqtrader.com"
-SYMBOL_DIR = "symboldirectory/"
-LISTED_FILE = "nasdaqlisted.txt"
+FTP_ADDR = cfg.FTP_ADDR
+SYMBOL_DIR = cfg.FTP_SYMBOL_DIR
+LISTED_FILE = cfg.FTP_LISTED_FILE
 
 
 def _update_nyse_listed():
@@ -38,8 +39,9 @@ def _update(cfg):
         
     return True
 
+# Config.ini File -----------------------------------------------------------------------------------------------------
 
-_CFG_FILE = pathlib.Path("./dataloader/config.ini")
+_CFG_FILE = cfg.DL_CFG_FILE
 
 _cfg = configparser.ConfigParser()
 
@@ -65,3 +67,11 @@ else:
         _cfg.write(cfg_file)
         
     _update(_cfg)
+
+# Cache Directory -----------------------------------------------------------------------------------------------------
+
+_CACHE_DIR = cfg.DL_CACHE_DIR
+
+# Create directory if it does not already exist
+if not _CACHE_DIR.exists():
+    os.mkdir(_CACHE_DIR)
