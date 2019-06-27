@@ -91,7 +91,9 @@ def intraday_plot():
     ])
 
     output_row = dbc.Row([
-        app_obj.html.get_graph("graph-intraday")
+        dcc.Loading(children=[
+            html.Div(app_obj.html.get_graph("graph-intraday"))
+        ], type="graph")
     ])
 
     obj = panel_template(title, input_row, output_row)
@@ -132,7 +134,51 @@ def historical_plot():
     ])
 
     output_row = dbc.Row([
-        app_obj.html.get_graph("graph-historical")
+        dcc.Loading(children=[
+            html.Div(app_obj.html.get_graph("graph-historical"))
+        ], type="graph")
+    ])
+
+    obj = panel_template(title, input_row, output_row)
+
+    return obj
+
+
+def treasury_curve():
+    """
+    An HTML Div containing an interactive US Treasury Curve plot
+    :return: HTML Div object
+    """
+
+    title = "US Treasury Curve"
+
+    input_row = dbc.Row([
+        dbc.Col([
+            app_obj.html.get_date_selector("dateselector-treasury-curve",
+                                           max_date=cfg.today,
+                                           value=cfg.today)
+        ], width=dict(size=2, offset=1)),
+        dbc.Col([
+            dbc.Button("Add Date", id="button-treasury-add-date", outline=True, className="mr-1", block=True)
+        ], width=dict(size=3)),
+        dbc.Col([
+            dcc.Dropdown(
+                id="dropdown-treasury-date",
+                options=[
+                    {'label': cfg.today, 'value': cfg.today}
+                ],
+                multi=True,
+                value=cfg.today
+            )
+        ], width=dict(size=6))
+    ], align="center")
+
+    output_row = dbc.Row([
+        dbc.Col(children=[
+            dcc.Loading(children=[
+                html.Div(app_obj.html.get_graph("graph-treasury-curve"))
+            ], type="graph")
+        ], width=12)
     ])
 
     obj = panel_template(title, input_row, output_row)

@@ -2,11 +2,11 @@
 Defines app configuration and styling
 """
 
-from datetime import datetime, timedelta
+import datetime
 
-today = datetime.today()
-min_intraday_date = today - timedelta(days=730)
-one_year_ago = today - timedelta(days=252 * 1)
+today = datetime.date.today()
+min_intraday_date = today - datetime.timedelta(days=730)
+one_year_ago = today - datetime.timedelta(days=252 * 1)
 
 
 user_tickers = []

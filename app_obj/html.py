@@ -129,6 +129,12 @@ def get_period_selector(id, default_value='ytd'):
 
 
 def get_news_card(entry, **kwargs):
+    """
+    Returns an HTML bootstrap card
+    :param entry:
+    :param kwargs:
+    :return:
+    """
     return dbc.Card(
         dbc.CardBody(
             [
@@ -139,4 +145,3 @@ def get_news_card(entry, **kwargs):
         ),
         **kwargs
     )
-

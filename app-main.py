@@ -3,7 +3,7 @@ Defines the high level app outline, structure and callback interaction
 """
 
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_table
 from datetime import datetime, timedelta
 import dash_core_components as dcc
@@ -40,7 +40,6 @@ def serve_layout():
         # Header
         app_obj.panel.header(),
 
-
         # Body
         dbc.Row([
             # Left Column
@@ -53,6 +52,12 @@ def serve_layout():
             dbc.Col([
                 app_obj.panel.news_feed()
             ], width=4)
+        ]),
+
+        dbc.Row([
+            dbc.Col([
+                app_obj.panel.treasury_curve()
+            ], width=12)
         ])
     ])
 
@@ -88,7 +93,7 @@ def update_intraday_graph(dropdown_intraday_symbol, dateselector_intraday, dropd
 
     df = dl.equities.get_historical(tickers=ticker, start_date=start, end_date=end, interval=interval)
 
-    return app_obj.figures.build_ohlcv(df, title=f'{ticker} - Intraday OHLCV ({end.date()})')
+    return app_obj.figures.build_ohlcv(df, title=f'{ticker} - Intraday OHLCV ({start.date()})')
 
 
 @app.callback(
@@ -115,6 +120,53 @@ def update_historical_graph(dropdown_historical_symbol, dateselector_historical_
     df = dl.equities.get_historical(tickers=ticker, start_date=start, end_date=end, interval=interval)
 
     return app_obj.figures.build_ohlcv(df, title=f'{ticker} - Historical OHLCV ({start} to {end})')
+
+
+@app.callback(
+    Output('dropdown-treasury-date', 'options'),
+    [
+        Input('button-treasury-add-date', 'n_clicks')
+    ],
+    [
+        State('dateselector-treasury-curve', 'date'),
+        State('dropdown-treasury-date', 'options')
+    ]
+)
+def update_treasury_date_dropdown(add_button, date, existing_dates):
+    """
+    Updates the date dropdown selector for the US Treasury Curve plot
+    """
+    date = app_obj.utils.parse_date(date).date()
+    existing_dates.append({'label': date, 'value': date})
+    return existing_dates
+
+
+@app.callback(
+    Output('graph-treasury-curve', 'figure'),
+    [
+        Input('dropdown-treasury-date', 'value')
+    ]
+)
+def update_treasury_curve_graph(dates):
+    """
+    Updates the US Treasury Yield Curve plot
+    """
+
+    if not isinstance(dates, list):
+        dates = [dates]
+
+    # Variables to update
+    dates = list(map(app_obj.utils.parse_date, dates))
+    df = dl.macro.get_treasury_curve(dates)
+
+    if len(dates) > 1:
+        title = "US Treasury Yield Curve"
+    elif len(dates) == 1:
+        title = f"US Treasury Yield Curve (as of {dates[0].date()})"
+    else:
+        title = ""
+
+    return app_obj.figures.build_yield_curve(df, title)
 
 
 @app.callback(

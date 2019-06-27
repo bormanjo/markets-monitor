@@ -58,3 +58,47 @@ def build_ohlcv(df, title='Intraday OHLCV Plot'):
 
     # Return the plotly figure
     return fig
+
+
+def build_yield_curve(df, title = "Yield Curve"):
+    """
+    Builds a plot of the yield curve
+    """
+
+    data = []
+    add_label = True
+
+    for dt in df["Date"].unique():
+        fltr = df["Date"] == dt
+        if add_label:
+            md = "lines+text+markers"
+            add_label = False
+        else:
+            md = "lines+markers"
+
+        data.append(
+            go.Scatter(
+                x=df.loc[fltr, "Label"],
+                y=df.loc[fltr, "Rate"],
+                mode=md,
+                text=df.loc[fltr, "Label"],
+                textposition='top center',
+                name=str(dt)
+            )
+        )
+
+    layout = go.Layout(
+        title=title,
+        yaxis=dict(title='Interest Rate (%)'),
+        xaxis=dict(
+            title='Maturity (Yr)',
+            categoryorder="array",
+            categoryarray=df["Label"][::-1].tolist(),
+            tickangle=-45,
+        )
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+
+    return fig
+
