@@ -2,6 +2,7 @@ pandas
 numpy
 scipy
 quandl
+fredapi
 yfinance
 matplotlib
 mysql-connector-python
