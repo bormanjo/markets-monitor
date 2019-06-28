@@ -43,7 +43,7 @@ def get_graph(id, figure=None):
             figure=figure
         )
 
-    return graph
+    return dcc.Loading(graph, type="graph")
 
 
 def get_symbol_selector(id, df, default_value='AAPL'):

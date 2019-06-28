@@ -49,7 +49,8 @@ def build_ohlcv(df, title='Intraday OHLCV Plot'):
             title='Volume',
             side="right",     
             overlaying="y"  # Volume plot overlays the candlestick
-        )
+        ),
+        template="plotly_white"
     )
 
     # Aggregate the traces and build the figure
@@ -95,7 +96,9 @@ def build_yield_curve(df, title = "Yield Curve"):
             categoryorder="array",
             categoryarray=df["Label"][::-1].tolist(),
             tickangle=-45,
-        )
+        ),
+        legend=dict(orientation="h", x=0, y=-0.2),
+        template="plotly_white"
     )
 
     fig = go.Figure(data=data, layout=layout)

@@ -13,9 +13,10 @@ import dataloader as dl
 import pandas as pd
 import app_obj
 import app_obj.cfg as cfg
+from . import subpanel
 
 
-def panel_template(title="Template Panel", input_row=dbc.Row(), output_row=dbc.Row()):
+def panel_template(title="Template Panel", output_row=dbc.Row(), **kwargs):
     """
     A template for designing panels
     :param title: String. Title of the panel
@@ -30,14 +31,11 @@ def panel_template(title="Template Panel", input_row=dbc.Row(), output_row=dbc.R
 
         html.Hr(),
 
-        # Inputs
-        input_row,
-
         # Output
         output_row,
 
         html.Hr(),
-    ])
+    ], **kwargs)
 
     return obj
 
@@ -55,138 +53,7 @@ def header():
     return obj
 
 
-def live_tickers():
-    """
-    An HTML Div containing a table of live ticker values
-    :return:
-    """
-
-    pass
-
-
-def intraday_plot():
-    """
-    An HTML Div containing an interactive plot of intraday OHLCV data
-    :return: html Div object
-    """
-
-    title = "Intraday OHLCV"
-
-    input_row = dbc.Row([
-        dbc.Col([
-            app_obj.html.get_symbol_selector("dropdown-intraday-symbol", df=dl.reference.get_symbols())
-        ], width=8),
-
-        dbc.Col([
-            app_obj.html.get_interval_selector("dropdown-intraday-interval", default_value="5m")
-        ], width=4),
-
-        dbc.Col([
-            app_obj.html.get_date_selector(
-                "dateselector-intraday",
-                min_date=cfg.min_intraday_date,
-                max_date=cfg.today
-            )
-        ], width=12)
-    ])
-
-    output_row = dbc.Row([
-        dcc.Loading(children=[
-            html.Div(app_obj.html.get_graph("graph-intraday"))
-        ], type="graph")
-    ])
-
-    obj = panel_template(title, input_row, output_row)
-
-    return obj
-
-
-def historical_plot():
-    """
-    An HTML Div containing an interactive plot of daily OHLCV data
-    :return: html Div object
-    """
-
-    title = "Historical OHLCV"
-
-    input_row = dbc.Row([
-        dbc.Col([
-            app_obj.html.get_symbol_selector("dropdown-historical-symbol", df=dl.reference.get_symbols())
-        ], width=8),
-
-        dbc.Col([
-            app_obj.html.get_interval_selector("dropdown-historical-interval", default_value="1d")
-        ], width=4),
-
-        dbc.Col([
-            app_obj.html.get_date_selector("dateselector-historical-start",
-                                           max_date=cfg.today,
-                                           value=cfg.one_year_ago
-                                           )
-        ], width=6),
-
-        dbc.Col([
-            app_obj.html.get_date_selector("dateselector-historical-end",
-                                           max_date=cfg.today,
-                                           value=cfg.today
-                                           )
-        ], width=6)
-    ])
-
-    output_row = dbc.Row([
-        dcc.Loading(children=[
-            html.Div(app_obj.html.get_graph("graph-historical"))
-        ], type="graph")
-    ])
-
-    obj = panel_template(title, input_row, output_row)
-
-    return obj
-
-
-def treasury_curve():
-    """
-    An HTML Div containing an interactive US Treasury Curve plot
-    :return: HTML Div object
-    """
-
-    title = "US Treasury Curve"
-
-    input_row = dbc.Row([
-        dbc.Col([
-            app_obj.html.get_date_selector("dateselector-treasury-curve",
-                                           max_date=cfg.today,
-                                           value=cfg.today)
-        ], width=dict(size=2, offset=1)),
-        dbc.Col([
-            dbc.Button("Add Date", id="button-treasury-add-date", outline=True, className="mr-1", block=True)
-        ], width=dict(size=3)),
-        dbc.Col([
-            dcc.Dropdown(
-                id="dropdown-treasury-date",
-                options=[
-                    {'label': cfg.today, 'value': cfg.today}
-                ],
-                multi=True,
-                value=cfg.today
-            )
-        ], width=dict(size=6))
-    ], align="center")
-
-    output_row = dbc.Row([
-        dbc.Col(children=[
-            dcc.Loading(children=[
-                html.Div(app_obj.html.get_graph("graph-treasury-curve"))
-            ], type="graph")
-        ], width=12)
-    ])
-
-    obj = panel_template(title, input_row, output_row)
-
-    return obj
-
-
-def news_feed():
+def news_component():
     """
     An HTML Div containing a tabbed RSS feed indexed by source
     :return: html Div object
@@ -196,9 +63,9 @@ def news_feed():
         dcc.Tabs(id="news-feed-tab-selector", value=list(dl.news.rss_feeds.keys())[0],
                  children=[dcc.Tab(label=source_key, value=source_key) for source_key in dl.news.rss_feeds.keys()]
                  ),
-        html.Div(id='news-feed-tab', children=[
+        dbc.Col(id='news-feed-tab', children=[
             dbc.Row(children=[
-                html.Div(id='news-feed-content')
+                html.Div(id='news-feed-content', style={'padding': 2})
             ]),
             dbc.Row(children=[
                 dbc.Col(
@@ -216,5 +83,51 @@ def news_feed():
     ])
 
     obj = panel_template("News Feed", output_row=output_row)
+
+    return obj
+
+
+def equity_component():
+    """
+    The main equity panel
+    :return:
+    """
+
+    title = "Equity Markets"
+
+    output_row = dbc.Row(
+        dbc.Tabs(id="equity-tab-selector", active_tab="intraday", children=[
+            dbc.Tab(label="Intraday", tab_id="intraday", children=[
+                subpanel.intraday_plot()
+            ]),
+            dbc.Tab(label="Historical", tab_id="historical", children=[
+                subpanel.historical_plot()
+            ])
+        ])
+    )
+
+    obj = panel_template(title, output_row)
+
+    return obj
+
+
+def macro_component():
+    """
+    The main macro panel
+    :return:
+    """
+
+    title = "Macro Data"
+
+    output_row = dbc.Row(
+        dbc.Tabs(id="macro-tab-selector", active_tab="ust-curve", children=[
+            dbc.Tab(label="US Treasury Curve", tab_id="ust-curve", children=[
+                subpanel.treasury_curve()
+            ]),
+            dbc.Tab(label="Coming Soon...", tab_id="coming-soon", disabled=True)
+        ])
+    )
+
+    obj = panel_template(title, output_row)
 
     return obj

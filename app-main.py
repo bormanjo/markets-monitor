@@ -15,7 +15,7 @@ from pandas.tseries.offsets import BDay
 import app_obj
 
 # Define the app object
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX])  # Cosmo, Journal, Litera, Lumen
 
 # Testing data
 aapl_intraday = dl.equities.get_historical(tickers="AAPL", period="1wk", interval="1h")
@@ -44,21 +44,22 @@ def serve_layout():
         dbc.Row([
             # Left Column
             dbc.Col([
-                app_obj.panel.intraday_plot(),
-                app_obj.panel.historical_plot()
+                app_obj.panel.equity_component(),
+                app_obj.panel.macro_component()
             ], width=8),
 
             # Right Column
             dbc.Col([
-                app_obj.panel.news_feed()
-            ], width=4)
+                app_obj.panel.news_component()
+            ], width=4),
+
+            dbc.Col([
+
+            ], width=12)
+
         ]),
 
-        dbc.Row([
-            dbc.Col([
-                app_obj.panel.treasury_curve()
-            ], width=12)
-        ])
+
     ])
 
     return layout
@@ -137,7 +138,12 @@ def update_treasury_date_dropdown(add_button, date, existing_dates):
     Updates the date dropdown selector for the US Treasury Curve plot
     """
     date = app_obj.utils.parse_date(date).date()
-    existing_dates.append({'label': date, 'value': date})
+
+    existing_dates_lst = [str(d["value"]) for d in existing_dates]
+
+    if str(date) not in existing_dates_lst:
+        existing_dates.append({'label': date, 'value': date})
+
     return existing_dates
 
 
@@ -207,9 +213,8 @@ def update_news_feed_content(news_feed_tab_selector, news_button_back, news_butt
     # Add the row
     content += [dbc.Row(children=[
         dbc.Col(
-            html.Div(
-                html.H5(f"{active_rss_page + 1}/{max_page + 1}", style={"text-align": "center"})
-            ), width=12)
+            html.H5(f"{active_rss_page + 1}/{max_page + 1}", style={"text-align": "center", 'padding': 5}),
+            width=12)
     ])]
 
     return html.Div(children=content)
