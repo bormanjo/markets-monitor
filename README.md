@@ -43,6 +43,7 @@ Currently under development.
         - Others?
 - U.S. Economic Data
     - Visualizations
+        - [X] US Treasury Yield Curve
         - [ ] Time Series Plots
         - [ ] YoY/QoQ Changes
     - Data
