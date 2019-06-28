@@ -132,39 +132,54 @@ def historical_plot():
     return obj
 
 
-def treasury_curve():
-    """
-    An HTML Div containing an interactive US Treasury Curve plot
-    :return: HTML Div object
-    """
-
-    title = ""  # "US Treasury Curve"
+def curve_template(title, dateselector_id, button_id, dropdown_id, graph_id, delay=0):
 
     input_row = dbc.Row([
         dbc.Col([
-            app_obj.html.get_date_selector("dateselector-treasury-curve",
-                                           max_date=cfg.today - BDay(2),
-                                           value=cfg.today - BDay(2))
+            app_obj.html.get_date_selector(dateselector_id,
+                                           max_date=cfg.today - BDay(delay),
+                                           value=cfg.today - BDay(delay))
         ], width=dict(size=2)),
         dbc.Col([
-            dbc.Button("Add Date", id="button-treasury-add-date", outline=True, className="mr-1", block=True)
+            dbc.Button("Add Date", id=button_id, outline=True, className="mr-1", block=True)
         ], width=dict(size=3, offset=1)),
         dbc.Col([
             dcc.Dropdown(
-                id="dropdown-treasury-date",
+                id=dropdown_id,
                 options=[
-                    {'label': cfg.today - BDay(2), 'value': cfg.today - BDay(2)}
+                    {'label': cfg.today - BDay(delay), 'value': cfg.today - BDay(delay)}
                 ],
                 multi=True,
-                value=cfg.today
+                value=cfg.today - BDay(delay)
             )
         ], width=dict(size=6))
     ], align="center")
 
     output_row = dbc.Row([
-        app_obj.html.get_graph("graph-treasury-curve")
+        app_obj.html.get_graph(graph_id)
     ])
 
     obj = sub_panel_template(title, input_row, output_row, width=12)
 
     return obj
+
+
+def usd_treasury_curve():
+    """
+    An HTML Div containing an interactive US Treasury Curve plot
+    :return: HTML Div object
+    """
+
+    return curve_template(title="", dateselector_id="dateselector-treasury-curve", button_id="button-treasury-add-date",
+                          dropdown_id="dropdown-treasury-date", graph_id="graph-treasury-curve", delay=2)
+
+
+def usd_swap_curve():
+    """
+    An HTML Div containing an interactive US Treasury Curve plot
+    :return: HTML Div object
+    """
+
+    return curve_template(title="", dateselector_id="dateselector-swap-curve", button_id="button-swap-add-date",
+                          dropdown_id="dropdown-swap-date", graph_id="graph-swap-curve", delay=5)
+

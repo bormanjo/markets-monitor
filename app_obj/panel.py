@@ -138,7 +138,30 @@ def macro_component():
     output_row = dbc.Row(
         dbc.Tabs(id="macro-tab-selector", active_tab="ust-curve", children=[
             dbc.Tab(label="US Treasury Curve", tab_id="ust-curve", children=[
-                subpanel.treasury_curve()
+                subpanel.usd_treasury_curve()
+            ]),
+            dbc.Tab(label="USD Swap Curve", tab_id="usd-swap-curve", children=[
+                subpanel.usd_swap_curve(),
+                dbc.Col([
+                    html.A(
+                        dbc.Button("Data Citations", className="mr-1", id="usd-swap-citations-button")
+                    )], width=4),
+                dbc.Popover(
+                    [
+                        dbc.PopoverHeader("USD Swap Citations"),
+                        dbc.PopoverBody([
+                            dbc.ListGroup(
+                                [dbc.ListGroupItem(
+                                    [dbc.ListGroupItemHeading(f"ICE USD Swap {yr} Yr"),
+                                     dbc.ListGroupItemText(dl.macro.get_usd_swap_citation(yr))]
+                                ) for yr in dl.macro.maturities]
+                            )
+                        ])
+                    ],
+                    id="usd-swap-citations",
+                    is_open=False,
+                    target="usd-swap-citations-button",
+                )
             ]),
             dbc.Tab(label="Coming Soon...", tab_id="coming-soon", disabled=True)
         ])
