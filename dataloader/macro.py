@@ -3,53 +3,17 @@ from . import cfg
 import configparser
 import pandas as pd
 from pandas.tseries.offsets import BDay
+import datetime
 
-_USD_YLD_CURVE = {
-    "30 Yr":{
-        "Years": 30,
-        "id": "DGS30"
-    },
-    "20 Yr":{
-        "Years": 20,
-        "id": "DGS20"
-    },
-    "10 Yr":{
-        "Years": 10,
-        "id": "DGS10"
-    },
-    "7 Yr":{
-        "Years": 7,
-        "id": "DGS7"
-    },
-    "5 Yr":{
-        "Years": 5,
-        "id": "DGS5"
-    },
-    "2 Yr":{
-        "Years": 2,
-        "id": "DGS2"
-    },
-    "1 Yr":{
-        "Years": 1,
-        "id": "DGS1"
-    },
-    "6 Mo":{
-        "Years": 0.5,
-        "id": "DGS6MO"
-    },
-    "3 Mo":{
-        "Years": 0.25,
-        "id": "DGS3MO"
-    },
-    "1 Mo":{
-        "Years": 0.083,
-        "id": "DGS1MO"
-    },
-    "Overnight":{
-        "Years": 1.0/360.0,
-        "id": "DFF"
-    }
+maturities = [30, 20, 10, 7, 5, 2, 1]
+
+UST_YLD_CURVE = {
+    **{f"{yr} Yr": f"DGS{yr}" for yr in maturities},
+    **{f"{mo} Mo": f"DGS{mo}MO" for mo in [6, 3, 1]},
+    **{"Overnight": "DFF"}
 }
+
+USD_SWAP_RATES = {yr: f"ICERATES1100USD{yr}Y" for yr in maturities}
 
 
 def get_api_key():
@@ -71,18 +35,53 @@ def get_treasury_curve(end_dates):
     for end_date in end_dates:
         start_date = end_date - BDay(2)
 
-        for maturity, meta in _USD_YLD_CURVE.items():
+        for label, series_id in UST_YLD_CURVE.items():
             tsy_data = fred.get_series(
-                meta["id"],
+                series_id,
                 observation_start=start_date,
                 observation_end=end_date
             ).tail(1)
             result.append({
-                "Label": maturity,
-                "Year": meta["Years"],
+                "Label": label,
+                "Year": label,
                 "Rate": tsy_data[0],
                 "Date": tsy_data.index.date[0]
             })
 
     return pd.DataFrame(result)
+
+
+def get_swap_curve(end_dates):
+    """Return the USD Swap Curve as of the given end_date"""
+    if not isinstance(end_dates, list):
+        end_dates = [end_dates]
+
+    result = []
+
+    for end_date in end_dates:
+        start_date = end_date - BDay(5)
+
+        for yr, series_id in USD_SWAP_RATES.items():
+            swap_data = fred.get_series(
+                series_id,
+                observation_start=start_date,
+                observation_end=end_date
+            ).tail(1)
+            result.append({
+                "Label": f"{yr} Yr",
+                "Year": yr,
+                "Rate": swap_data[0],
+                "Date": swap_data.index.date[0]
+            })
+
+    return pd.DataFrame(result)
+
+
+def get_usd_swap_citation(year):
+
+    date = datetime.date.today().strftime("%b %d, %Y")
+
+    return "ICE Benchmark Administration Limited (IBA), ICE Swap Rates, 11:00 A.M. (London Time)," + \
+           f"Based on U.S. Dollar, 10 Year Tenor [ICERATES1100USD{year}Y], retrieved from FRED," + \
+           f"Federal Reserve Bank of St. Louis; https://fred.stlouisfed.org/series/ICERATES1100USD{year}Y," + date
 

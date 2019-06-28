@@ -148,6 +148,30 @@ def update_treasury_date_dropdown(add_button, date, existing_dates):
 
 
 @app.callback(
+    Output('dropdown-swap-date', 'options'),
+    [
+        Input('button-swap-add-date', 'n_clicks')
+    ],
+    [
+        State('dateselector-swap-curve', 'date'),
+        State('dropdown-swap-date', 'options')
+    ]
+)
+def update_swap_date_dropdown(add_button, date, existing_dates):
+    """
+    Updates the date dropdown selector for the US Treasury Curve plot
+    """
+    date = app_obj.utils.parse_date(date).date()
+
+    existing_dates_lst = [str(d["value"]) for d in existing_dates]
+
+    if str(date) not in existing_dates_lst:
+        existing_dates.append({'label': date, 'value': date})
+
+    return existing_dates
+
+
+@app.callback(
     Output('graph-treasury-curve', 'figure'),
     [
         Input('dropdown-treasury-date', 'value')
@@ -173,6 +197,46 @@ def update_treasury_curve_graph(dates):
         title = ""
 
     return app_obj.figures.build_yield_curve(df, title)
+
+
+@app.callback(
+    Output('graph-swap-curve', 'figure'),
+    [
+        Input('dropdown-swap-date', 'value')
+    ]
+)
+def update_swap_curve_graph(dates):
+    """
+    Updates the US Treasury Yield Curve plot
+    """
+
+    if not isinstance(dates, list):
+        dates = [dates]
+
+    # Variables to update
+    dates = list(map(app_obj.utils.parse_date, dates))
+    df = dl.macro.get_swap_curve(dates)
+
+    if len(dates) > 1:
+        title = "USD Swap Curve"
+    elif len(dates) == 1:
+        title = f"USD Swap Curve (as of {dates[0].date()})"
+    else:
+        title = ""
+
+    return app_obj.figures.build_yield_curve(df, title)
+
+
+@app.callback(
+    Output("usd-swap-citations", "is_open"),
+    [Input("usd-swap-citations-button", "n_clicks")],
+    [State("usd-swap-citations", "is_open")],
+)
+def toggle_usd_swap_citations(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
 
 
 @app.callback(
