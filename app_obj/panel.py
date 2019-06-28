@@ -47,7 +47,23 @@ def header():
     """
 
     obj = dbc.Jumbotron([
-        html.H1("Financial Markets Monitor")
+        html.H1("Financial Markets Monitor"),
+        html.P("A dashboard monitor for financial and economic market data"),
+        html.Hr(),
+        dbc.Row([
+            dbc.Col([
+                html.A(
+                    dbc.Button("GitHub", className="mr-1", block=True),
+                    href="https://github.com/bormanjo/markets-monitor")
+            ], width=2),
+
+            dbc.Col([
+                html.A(
+                    dbc.Button("LinkedIn", className="mr-1", block=True),
+                    href="https://www.linkedin.com/in/jcborman/")
+            ], width=2)
+        ])
+
     ])
 
     return obj
