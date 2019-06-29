@@ -69,9 +69,10 @@ def intraday_plot():
             dbc.Row([
                 dbc.Col(html.H5("Date:", style={'textAlign': 'center'}), width=2, align="center"),
                 dbc.Col(app_obj.html.get_date_selector(
-                        "dateselector-intraday",
-                        min_date=cfg.min_intraday_date,
-                        max_date=cfg.today),
+                    "dateselector-intraday",
+                    min_date=cfg.min_intraday_date,
+                    max_date=cfg.today,
+                    value=cfg.today - BDay(1)),
                     width=3)
             ])
         ], width=12, style={'padding': 10})
@@ -133,7 +134,6 @@ def historical_plot():
 
 
 def curve_template(title, dateselector_id, button_id, dropdown_id, graph_id, delay=0):
-
     input_row = dbc.Row([
         dbc.Col([
             app_obj.html.get_date_selector(dateselector_id,
@@ -182,4 +182,3 @@ def usd_swap_curve():
 
     return curve_template(title="", dateselector_id="dateselector-swap-curve", button_id="button-swap-add-date",
                           dropdown_id="dropdown-swap-date", graph_id="graph-swap-curve", delay=5)
-

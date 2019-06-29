@@ -61,7 +61,7 @@ def build_ohlcv(df, title='Intraday OHLCV Plot'):
     return fig
 
 
-def build_yield_curve(df, title = "Yield Curve"):
+def build_yield_curve(df, title="Yield Curve"):
     """
     Builds a plot of the yield curve
     """
