@@ -63,6 +63,12 @@ else:
     _cfg['DATA'] = {
         'Last Update': date.today()
     }
+
+    # When deployed on heroku, find the API Keys as an environment variable
+    _cfg['API KEY'] = {
+        'quandl': os.environ['API_KEY_QUANDL'],
+        'fred': os.environ['API_KEY_FRED']
+    }
     
     with open(_CFG_FILE, 'w') as cfg_file:
         _cfg.write(cfg_file)
