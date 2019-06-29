@@ -14,4 +14,3 @@ dash-table
 plotly
 cufflinks
 feedparser
-
