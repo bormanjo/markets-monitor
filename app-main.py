@@ -13,14 +13,23 @@ import dataloader as dl
 import pandas as pd
 from pandas.tseries.offsets import BDay
 import app_obj
+from flask import Flask
+import os
 
-# Define the app object
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX])  # Cosmo, Journal, Litera, Lumen
+try:
+    _DEV_ENVIRONMENT = False
 
-# Testing data
-aapl_intraday = dl.equities.get_historical(tickers="AAPL", period="1wk", interval="1h")
-aapl_eod = dl.equities.get_historical(tickers="AAPL", period="ytd", interval="1h")
-symbols = dl.reference.get_symbols()
+    # The following are setup instructions for a Production Environment
+    server = Flask(__name__)
+    server.secret_key = os.environ.get('secret_key', 'secret')  # App will not find this if running local development
+
+    app = dash.Dash(name= __name__, server=server, external_stylesheets=[dbc.themes.LUX])  # Cosmo, Journal, Litera, Lumen
+    app.config.supress_callback_exceptions = True
+except AttributeError as e:
+    # Setup instruction for Development Environment
+    _DEV_ENVIRONMENT = True
+
+    app = dash.Dash(name=__name__, external_stylesheets=[dbc.themes.LUX])
 
 # GLOBALS
 active_rss_tab = ""
@@ -54,12 +63,10 @@ def serve_layout():
             ], width=4),
 
             dbc.Col([
-
+            # F
             ], width=12)
 
         ]),
-
-
     ])
 
     return layout
@@ -287,5 +294,5 @@ def update_news_feed_content(news_feed_tab_selector, news_button_back, news_butt
 # Main -----------------------------------------------------------------------------------------------------------------
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and _DEV_ENVIRONMENT:
     app.run_server(debug=True, host='0.0.0.0', port=8050)

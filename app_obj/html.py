@@ -46,7 +46,7 @@ def get_graph(id, figure=None):
     return dcc.Loading(graph, type="graph")
 
 
-def get_symbol_selector(id, df, default_value='AAPL'):
+def get_symbol_selector(dropdown_id, df, default_value='AAPL'):
     """
     Returns an HTML widger for selecting a ticker
     """
@@ -58,7 +58,7 @@ def get_symbol_selector(id, df, default_value='AAPL'):
     data = data.rename(columns={"Security Name": "label", "Symbol": "value"}).to_dict("records")
 
     dropdown = dcc.Dropdown(
-        id=id,
+        id=dropdown_id,
         options=data, 
         multi=False,
         value=default_value
@@ -67,7 +67,7 @@ def get_symbol_selector(id, df, default_value='AAPL'):
     return dropdown
 
 
-def get_date_selector(id, min_date=None, max_date=None, value=None):
+def get_date_selector(dateselector_id, min_date=None, max_date=None, value=None):
     """
     Returns an HTML date selector widget
     """
@@ -79,7 +79,7 @@ def get_date_selector(id, min_date=None, max_date=None, value=None):
             raise ValueError("Argument passed to 'value' is of type '{}', not 'date'".format(type(value)))
 
     selector = dcc.DatePickerSingle(
-        id=id,
+        id=dateselector_id,
         date=value,
         max_date_allowed=max_date,
         min_date_allowed=min_date
@@ -88,7 +88,7 @@ def get_date_selector(id, min_date=None, max_date=None, value=None):
     return selector
 
 
-def get_interval_selector(id, default_value='5m'):
+def get_interval_selector(interval_selector_id, default_value='5m'):
     """
     Returns an HTML interval selector
     :param id: HTML Object ID
@@ -99,7 +99,7 @@ def get_interval_selector(id, default_value='5m'):
     data = utils.dict_to_selector_data(dl.equities.interval_mapping)
 
     selector = dcc.Dropdown(
-        id=id,
+        id=interval_selector_id,
         options=data,
         multi=False,
         value=default_value
@@ -108,7 +108,7 @@ def get_interval_selector(id, default_value='5m'):
     return selector
 
 
-def get_period_selector(id, default_value='ytd'):
+def get_period_selector(period_selector_id, default_value='ytd'):
     """
     Returns an HTML period selector
     :param id: HTML Object ID
@@ -119,7 +119,7 @@ def get_period_selector(id, default_value='ytd'):
     data = utils.dict_to_selector_data(dl.equities.period_mapping)
 
     selector = dcc.Dropdown(
-        id=id,
+        id=period_selector_id,
         options=data,
         multi=False,
         value=default_value
